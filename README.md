@@ -151,9 +151,9 @@ swiggy-business-analysis-sql/
 
 B.Tech CSE | Aspiring Data Analyst
 
-GitHub: https://github.com/shubhamss02
+GitHub: [Shubham Singh](https://github.com/shubhamss02)
 
-LinkedIn: *(Add your LinkedIn profile here)*
+LinkedIn: [Shubham Singh](https://www.linkedin.com/in/shubham-singh-535274279/)
 
 ---
 
