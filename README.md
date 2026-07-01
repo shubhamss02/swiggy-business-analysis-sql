@@ -106,8 +106,37 @@ SELECT *,
 	DENSE_RANK() OVER(ORDER BY Avg_price DESC) AS category_rank
 FROM category_avg;
 ```
-
-
+ **Q. Compare Average Menu Prices State-wise and City-wise**
+  - CTEs, Multi-level Aggregation
+```sql
+WITH state_avg AS (
+	SELECT
+		dl.state,
+		AVG(ft.price) AS state_avg_price
+	FROM fact_table ft
+	JOIN dim_location dl
+	ON ft.location_id=dl.location_id
+	GROUP BY dl.state
+),
+city_avg AS (
+	SELECT 
+		dl.state,
+		dl.city,
+		AVG(ft.price) as city_avg_price
+	FROM fact_table ft
+	JOIN dim_location dl
+	ON ft.location_id=dl.location_id
+	GROUP BY dl.state,dl.city
+)
+SELECT
+	ca.state,
+	ca.city,
+	ca.city_avg_price,
+	sa.state_avg_price
+FROM city_avg ca
+JOIN state_avg sa
+ON ca.state=sa.state;
+```
 ---
 
 # 🚀 Key Skills Demonstrated
