@@ -234,6 +234,11 @@ WHERE avg_price < overall_avg_price
 AND avg_rating > overall_avg_rating
 ORDER BY avg_rating DESC , avg_price ASC;
 ```
+> 📌 This project contains **30 SQL business problems** covering Aggregations, KPIs, Time Intelligence, Window Functions, Ranking Functions, and Advanced Business Insights.
+>
+> The complete set of questions and solutions can be found in:
+>
+> 📄 `Swiggy_Analysis.sql`
 ---
 
 # 🚀 Key Skills Demonstrated
