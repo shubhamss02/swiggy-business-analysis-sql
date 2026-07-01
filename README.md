@@ -38,6 +38,10 @@ The project follows a **Star Schema Data Warehouse approach** and solves real-wo
 
 The project follows a **Star Schema** approach.
 
+## ⭐ Star Schema (ERD)
+
+![Star Schema](schema/star_schema.png)
+
 ## Raw Data Layer
 - `swiggy_data`
 
