@@ -68,7 +68,7 @@ The project follows a **Star Schema** approach.
 
 ---
 
-# 🎯 SQL Concepts Used
+# 🎯 SQL Concepts Covered
 
 - Joins
 - Join Cardinality
@@ -88,51 +88,25 @@ The project follows a **Star Schema** approach.
 
 ---
 
-# 📈 Business Problems Solved
+# 💼 Key Business Insights Solved
+**Q. Dense Rank Categories Based on Average Menu Price**
+  - Concepts: DENSE_RANK(), Window Functions
 
-- Performed data quality checks and exploratory analysis.
-- Analyzed restaurant performance and customer ratings.
-- Identified top-performing restaurants and restaurant brands.
-- Conducted monthly and quarterly trend analysis.
-- Ranked restaurants, dishes, and categories using window functions.
-- Compared category prices using LAG() and LEAD().
-- Segmented menu items into Budget, Mid-Range, and Premium categories.
-- Identified top expensive menu items in each category.
-- Discovered categories performing above overall averages.
-- Identified value-for-money categories having high ratings and lower average prices.
-
----
-
-# 📂 Repository Structure
-
-```text
-swiggy-business-analysis-sql/
-│
-├── README.md
-├── Swiggy_Analysis.sql
-│
-├── schema/
-│   └── star_schema.png
-│
-├── screenshots/
-│   ├── er_diagram.png
-│   ├── top_restaurants.png
-│   ├── window_functions.png
-│   └── value_for_money.png
-│
-└── docs/
-    └── project_report.pdf
+```sql
+WITH category_avg AS (
+	SELECT
+		dc.category,
+		ROUND(AVG(ft.price),2) AS Avg_price
+	FROM fact_table ft
+	JOIN dim_category dc
+	ON ft.category_id=dc.category_id
+	GROUP BY dc.category
+)
+SELECT *,
+	DENSE_RANK() OVER(ORDER BY Avg_price DESC) AS category_rank
+FROM category_avg;
 ```
 
----
-
-# 📸 Project Screenshots
-
-### Star Schema
-(Add image here)
-
-### Query Outputs
-(Add screenshots here)
 
 ---
 
