@@ -137,6 +137,103 @@ FROM city_avg ca
 JOIN state_avg sa
 ON ca.state=sa.state;
 ```
+**Q. Find Restaurant Outlets Whose Average Rating Is Higher Than Their City's Average**
+  - Comparative Analysis, Joins
+```sql
+WITH city_avg AS (
+	SELECT 
+		dl.city,
+		AVG(ft.rating) AS City_Avg_Rating
+	FROM fact_table ft
+	JOIN dim_location dl
+	ON ft.location_id=dl.location_id
+	GROUP BY dl.city
+)
+SELECT 
+	dr.restaurant_id,
+	dr.restaurant_name,
+	dl.city,
+	AVG(ft.rating) AS Restaurant_Avg_Rating,
+	ca.City_Avg_Rating
+FROM fact_table ft
+JOIN dim_location dl
+ON ft.location_id=dl.location_id
+JOIN city_avg ca 
+ON dl.city=ca.city
+JOIN dim_restaurant dr
+ON dl.location_id=dr.location_id
+GROUP BY dr.restaurant_id, dr.restaurant_name, dl.city, ca.City_Avg_Rating
+HAVING AVG(ft.rating) > ca.city_avg_rating;
+```
+**Q. Compare Each Category's Average Price with the Previous Category Using LAG()**
+  - LAG(), Analytical Window Functions
+```sql
+WITH category_avg AS (
+	SELECT
+		dc.category,
+		ROUND(AVG(ft.price),2) AS avg_price
+	FROM fact_table ft
+	JOIN dim_category dc
+	ON ft.category_id=dc.category_id
+	GROUP BY dc.category
+)
+SELECT *,
+	LAG(avg_price) OVER(ORDER BY avg_price) AS lag_avg_price,
+	avg_price - LAG(avg_price) OVER(ORDER BY avg_price) AS difference
+FROM category_avg;
+```
+**Q. Find the Top 5 Most Expensive Menu Items in Each Category**
+  - ROW_NUMBER(), PARTITION BY, Top-N Analysis
+```sql
+WITH expensive_items AS (
+	SELECT
+		dc.category,
+		dd.dish_id,
+		dd.dish_name,
+		MAX(ft.price) AS max_price
+	FROM fact_table ft
+	JOIN dim_category dc
+	ON ft.category_id=dc.category_id
+	JOIN dim_dish dd
+	ON ft.dish_id=dd.dish_id
+	GROUP BY dc.category,dd.dish_id,dd.dish_name
+),
+ranking AS (
+	SELECT *,
+		ROW_NUMBER() OVER(
+			PARTITION BY category 
+			ORDER BY max_price DESC) AS ranks
+	FROM expensive_items
+)
+SELECT * FROM ranking
+WHERE ranks<=5;
+```
+**Q. Identify Categories That Provide the Best Value for Money**
+  - Multiple CTEs, CROSS JOIN, Business KPI Analysis
+```sql
+WITH category_avg AS (
+	SELECT
+		dc.category,
+		ROUND(AVG(ft.rating),2) AS avg_rating,
+		ROUND(AVG(ft.price),2) AS avg_price
+	FROM fact_table ft
+	JOIN dim_category dc
+	ON ft.category_id=dc.category_id
+	GROUP BY dc.category
+),
+overall_avg AS (
+	SELECT
+		ROUND(AVG(rating),2) AS overall_avg_rating,
+		ROUND(AVG(price),2) AS overall_avg_price
+	FROM fact_table
+)
+SELECT *
+FROM category_avg
+CROSS JOIN overall_avg
+WHERE avg_price < overall_avg_price
+AND avg_rating > overall_avg_rating
+ORDER BY avg_rating DESC , avg_price ASC;
+```
 ---
 
 # 🚀 Key Skills Demonstrated
